@@ -56,6 +56,13 @@ ddtrace-run test_requests.py
 
 You are now running APM for a Python application and DBM for a Postgres database and have connected the two.
 
+![Image 2023-06-05 at 1 28 20 AM](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/65ece23c-e522-4fcb-8754-88a420f16a78)
+
+You can take advantage of connecting your traces and DBM data
+
+
+![ezgif com-optimize](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/5afffa6e-5e46-4ad5-a26f-9b26449032f5)
+
 
 
 
