@@ -112,4 +112,3 @@ for db_name in databases:
     check_postgres_stats(connection_params, db_name)
 
 print("Setup complete!")
-

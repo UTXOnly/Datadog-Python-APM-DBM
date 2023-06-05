@@ -19,4 +19,3 @@ def test_make_requests():
         time.sleep(1)
 
 test_make_requests()
-
