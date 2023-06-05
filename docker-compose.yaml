@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  postgres_test_db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_HOST=172.16.238.2
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DD_TAGS=env:apm-dbm-test
+    ports:
+      - 5432
+    command: postgres -c 'config_file=/postgresql.conf'
+    volumes:
+      - ${PWD}/postgresql.conf:/postgresql.conf
+    networks:
+      test-network:
+        ipv4_address: 172.16.238.2
+
+    labels:
+      com.datadoghq.ad.check_names: '["postgres"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: |
+        [
+          {
+            "dbm": true,
+            "username": "datadog",
+            "password" : "datadog",
+            "host": "172.16.238.2",
+            "port" : "5432",
+            "disable_generic_tags": true,
+            "tags" : "db:local_test",
+            "service" : "test-pg-db",
+            "reported_hostname" : "test-pg-db"
+          }
+        ]
+
+  datadog-agent:
+    container_name: datadog-agent
+    image: datadog/agent:latest
+    environment:
+      ## GLOBALS
+      - DD_API_KEY=${DD_API_KEY}
+      - DD_SITE=datadoghq.com
+      - DD_HOSTNAME=nostpy-test
+      - DD_TAGS=env:apm-dbm-test
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_DOCKER_LABELS_AS_TAGS=true
+      - DD_DOCKER_ENV_AS_TAGS=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_AGENT_HOST=host.docker.internal
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_LOG_LEVEL=debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+    ports:
+      - "8126:8126"
+      - "8125:8125"
+    networks:
+      test-network:
+        ipv4_address: 172.16.238.3
+
+
+networks:
+  test-network:
+    ipam:
+      config:
+        - subnet: 172.16.238.0/24
