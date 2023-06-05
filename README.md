@@ -80,7 +80,7 @@ This program uses the Docker container Datadog agent and configures the Postgres
 
 You are now running APM for a Python application and DBM for a Postgres database and have connected the two.
 
-![Image 2023-06-05 at 1 28 20 AM](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/65ece23c-e522-4fcb-8754-88a420f16a78)
+![Image 2023-06-05 at 2 09 02 AM](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/cf2f4830-8f32-4fc7-8034-d2baf1950061)
 
 You can now take advantage of connecting your traces and DBM data
 
