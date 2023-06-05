@@ -1,15 +1,15 @@
 import os
-import psycopg2
-import requests
 import socket
 from flask import Flask, jsonify
 from ddtrace import tracer
+import psycopg2
+import requests
+from dotenv import load_dotenv
 
 tracer.configure(hostname='127.0.0.1', port=8126)
 
 os.environ["DD_DBM_PROPAGATION_MODE"] = "full"
 
-from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)

@@ -1,7 +1,7 @@
-import psycopg2
 import os
 import time
 from dotenv import load_dotenv
+import psycopg2
 
 load_dotenv()
 
@@ -24,7 +24,7 @@ def create_datadog_user_and_schema(conn, db):
         exists = cur.fetchone()
         if not exists:
             cur.execute("CREATE USER datadog WITH password 'datadog'")
-            print(f"{GREEN}datadog user created in {db}{GREEN} database{RESET}")
+            print(f"{GREEN}datadog user created in {db} database{RESET}")
             conn.commit()
 
     with conn.cursor() as cur:
@@ -42,7 +42,7 @@ def create_datadog_user_and_schema(conn, db):
             cur.execute("GRANT USAGE ON SCHEMA public TO datadog")
             cur.execute("GRANT pg_monitor TO datadog")
             cur.execute("CREATE EXTENSION IF NOT EXISTS pg_stat_statements")
-            print(f"{GREEN}datadog schema created and permissions granted in {RESET}{db}{GREEN} database{RESET}")
+            print(f"{GREEN}datadog schema created and permissions granted in {db} database{RESET}")
             conn.commit()
 
 
@@ -71,47 +71,45 @@ def create_datadog_user_and_schema(conn, db):
         conn.commit()
         time.sleep(2)
      
-    print(f"{GREEN}Explain plans statement completed for:{RESET}{db}{GREEN} database{RESET}")
+    print(f"{GREEN}Explain plans statement completed for: {db} database{RESET}")
 
 
-def check_postgres_stats(connection_params,db):
+def check_postgres_stats(connection_params, db):
     try:
         conn = psycopg2.connect(**connection_params)
         with conn.cursor() as cur:
             cur.execute("SELECT 1 FROM pg_stat_database LIMIT 1;")
-            print(f"{GREEN}Postgres connection - OK in {RESET}{db}")
+            print(f"{GREEN}Postgres connection - OK in {db}")
         
             cur.execute("SELECT 1 FROM pg_stat_activity LIMIT 1;")
-            print(f"{GREEN}Postgres pg_stat_activity read OK in {RESET}{db}")
+            print(f"{GREEN}Postgres pg_stat_activity read OK in {db}")
 
             cur.execute("SELECT 1 FROM pg_stat_statements LIMIT 1;")
-            print(f"{GREEN}Postgres pg_stat_statements read OK {RESET}{db}")
+            print(f"{GREEN}Postgres pg_stat_statements read OK {db}")
 
         print(f"{RED}\n############### Moving On... to next database ###############################\n{RESET}")
         conn.close()
     except psycopg2.OperationalError:
-        print(f"{RED}Cannot connect to Postgres databse to check stats{RESET}{db}")
+        print(f"{RED}Cannot connect to Postgres database to check stats {db}{RESET}")
     except psycopg2.Error:
-        print(f"{RED}Error while accessing Postgres statistics{RESET} in {db}")
+        print(f"{RED}Error while accessing Postgres statistics in {db}{RESET}")
 
 def list_databases(conn):
-    
     with conn.cursor() as cur:
         cur.execute("SELECT datname FROM pg_database WHERE datistemplate = false")
         databases = [row[0] for row in cur.fetchall() if not row[0].startswith('template')]
-
     return databases
 
 conn = psycopg2.connect(**connection_params)
 databases = list_databases(conn)
 
-# Iterate through the list of database names, run 
+# Iterate through the list of database names, run checks and create schemas
 for db_name in databases:
-
-    print(f"{GREEN}Discovered database: {RESET}{db_name} \n Creating schema and checking premissions + stats")
+    print(f"{GREEN}Discovered database: {RESET}{db_name} \nCreating schema and checking permissions + stats")
     connection_params['dbname'] = db_name
     conn = psycopg2.connect(**connection_params)
     create_datadog_user_and_schema(conn, connection_params['dbname'])
     check_postgres_stats(connection_params, db_name)
 
 print("Setup complete!")
+
