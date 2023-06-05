@@ -47,7 +47,6 @@ def create_datadog_user_and_schema(conn, db):
 
 
     with conn.cursor() as cur:
-        #cur.execute("CREATE EXTENSION IF NOT EXISTS pg_stat_statements")
         cur.execute("""
         CREATE OR REPLACE FUNCTION datadog.explain_statement(
             l_query TEXT,

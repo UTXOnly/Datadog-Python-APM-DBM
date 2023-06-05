@@ -5,7 +5,6 @@ import socket
 from flask import Flask, jsonify
 from ddtrace import tracer
 
-
 tracer.configure(hostname='127.0.0.1', port=8126)
 
 os.environ["DD_DBM_PROPAGATION_MODE"] = "full"
@@ -51,7 +50,6 @@ if response.status_code == 200:
 else:
     print("Error: Unable to fetch data from API")
 
-
 @app.route('/apm-dbm')
 def index():
     # Query the database for all rows in a table
@@ -70,7 +68,6 @@ def index():
     
     # Return the result as JSON
     return jsonify(result)
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -42,7 +42,6 @@ services:
     container_name: datadog-agent
     image: datadog/agent:latest
     environment:
-      ## GLOBALS
       - DD_API_KEY=${DD_API_KEY}
       - DD_SITE=datadoghq.com
       - DD_HOSTNAME=nostpy-test
