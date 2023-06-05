@@ -1,5 +1,5 @@
 # Datadog_APM_DBM
-Simple Python Flask app and Postgres DB for testing [Connecting DBM and APM](https://docs.datadoghq.com/database_monitoring/guide/connect_dbm_and_apm/?tab=python) with the Datadog agent. 
+Simple Python Flask app and Postgres DB for testing [Connecting DBM and APM](https://docs.datadoghq.com/database_monitoring/guide/connect_dbm_and_apm/?tab=python) and [Postgres integration](https://docs.datadoghq.com/integrations/postgres/?tab=docker) with the Datadog agent. This repo includes a `postgresql.conf` file with the necessary modifications to use [Datadog Database Monitoring](https://docs.datadoghq.com/database_monitoring/setup_postgres/selfhosted/?tab=postgres10). Part of that that script prepares discovers databases, iterating through each database to create the necessary schemas and install the `pg_stat_statements` extension if it doesn't already exist. 
 
 ## Prerequisites
 * Docker-compose
@@ -52,13 +52,37 @@ In another terminal you can run the `test_requests.py` script to send requests y
 ddtrace-run test_requests.py
 ```
 
+## Datadog agent configuration
+
+This program uses the Docker container Datadog agent and configures the Postgres integration via autodiscovered Docker labels. This is the configuration used to match the credentials int he `dbm_setup.py` script and the ip address assigned in the `docker-compose.yaml` file.
+
+```
+    labels:
+      com.datadoghq.ad.check_names: '["postgres"]'
+      com.datadoghq.ad.init_configs: '[{}]'
+      com.datadoghq.ad.instances: |
+        [
+          {
+            "dbm": true,
+            "username": "datadog",
+            "password" : "datadog",
+            "host": "172.16.238.2",
+            "port" : "5432",
+            "disable_generic_tags": true,
+            "tags" : "db:local_test",
+            "service" : "test-pg-db",
+            "reported_hostname" : "test-pg-db"
+          }
+        ]
+```
+
 ## Results
 
 You are now running APM for a Python application and DBM for a Postgres database and have connected the two.
 
 ![Image 2023-06-05 at 1 28 20 AM](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/65ece23c-e522-4fcb-8754-88a420f16a78)
 
-You can take advantage of connecting your traces and DBM data
+You can now take advantage of connecting your traces and DBM data
 
 
 ![ezgif com-optimize](https://github.com/UTXOnly/Datadog_APM_DBM/assets/49233513/5afffa6e-5e46-4ad5-a26f-9b26449032f5)
