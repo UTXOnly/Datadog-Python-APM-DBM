@@ -52,11 +52,6 @@ else:
     print("Error: Unable to fetch data from API")
 
 
-
-
-
-
-
 @app.route('/apm-dbm')
 def index():
     # Query the database for all rows in a table
