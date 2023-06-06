@@ -1,3 +1,5 @@
 flask
 psycopg2
 ddtrace
+python-env
+requests
