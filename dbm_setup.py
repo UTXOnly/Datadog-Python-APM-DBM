@@ -17,8 +17,8 @@ connection_params = {
     'password': os.getenv('DB_PASSWORD')
 }
 
+
 def create_datadog_user_and_schema(conn, db):
-    db = db
     with conn.cursor() as cur:
         cur.execute("SELECT 1 FROM pg_roles WHERE rolname='datadog'")
         exists = cur.fetchone()
@@ -46,6 +46,7 @@ def create_datadog_user_and_schema(conn, db):
             conn.commit()
 
 
+def explain_statement(conn, l_query):
     with conn.cursor() as cur:
         cur.execute("""
         CREATE OR REPLACE FUNCTION datadog.explain_statement(
@@ -70,8 +71,8 @@ def create_datadog_user_and_schema(conn, db):
         """)
         conn.commit()
         time.sleep(2)
-     
-    print(f"{GREEN}Explain plans statement completed for: {db} database{RESET}")
+
+    print(f"{GREEN}Explain plans statement completed{RESET}")
 
 
 def check_postgres_stats(connection_params, db):
@@ -80,7 +81,7 @@ def check_postgres_stats(connection_params, db):
         with conn.cursor() as cur:
             cur.execute("SELECT 1 FROM pg_stat_database LIMIT 1;")
             print(f"{GREEN}Postgres connection - OK in {db}")
-        
+
             cur.execute("SELECT 1 FROM pg_stat_activity LIMIT 1;")
             print(f"{GREEN}Postgres pg_stat_activity read OK in {db}")
 
@@ -94,16 +95,18 @@ def check_postgres_stats(connection_params, db):
     except psycopg2.Error:
         print(f"{RED}Error while accessing Postgres statistics in {db}{RESET}")
 
+
 def list_databases(conn):
     with conn.cursor() as cur:
         cur.execute("SELECT datname FROM pg_database WHERE datistemplate = false")
         databases = [row[0] for row in cur.fetchall() if not row[0].startswith('template')]
     return databases
 
+
 conn = psycopg2.connect(**connection_params)
 databases = list_databases(conn)
 
-# Iterate through the list of database names, run checks and create schemas
+# Iterate through the list of database names, run checks, and create schemas
 for db_name in databases:
     print(f"{GREEN}Discovered database: {RESET}{db_name} \nCreating schema and checking permissions + stats")
     connection_params['dbname'] = db_name
