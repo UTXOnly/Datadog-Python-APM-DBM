@@ -1,3 +1,4 @@
+# pylint: disable=W0621
 import os
 import time
 from dotenv import load_dotenv
