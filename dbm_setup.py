@@ -18,8 +18,8 @@ connection_params = {
 }
 
 
-def create_datadog_user_and_schema(conn, db):
-    with conn.cursor() as cur:
+def create_datadog_user_and_schema(conn_obj, db):
+    with conn_obj.cursor() as cur:
         cur.execute("SELECT 1 FROM pg_roles WHERE rolname='datadog'")
         exists = cur.fetchone()
         if not exists:
@@ -27,7 +27,7 @@ def create_datadog_user_and_schema(conn, db):
             print(f"{GREEN}datadog user created in {db} database{RESET}")
             conn.commit()
 
-    with conn.cursor() as cur:
+    with conn_obj.cursor() as cur:
         cur.execute("SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = 'datadog')")
         schema_exists = cur.fetchone()[0]
 
@@ -36,18 +36,14 @@ def create_datadog_user_and_schema(conn, db):
 
     else:
 
-        with conn.cursor() as cur:
-            cur.execute("CREATE SCHEMA datadog")
-            cur.execute("GRANT USAGE ON SCHEMA datadog TO datadog")
-            cur.execute("GRANT USAGE ON SCHEMA public TO datadog")
-            cur.execute("GRANT pg_monitor TO datadog")
-            cur.execute("CREATE EXTENSION IF NOT EXISTS pg_stat_statements")
+        with conn_obj.cursor() as cur:
+            cur.execute("CREATE SCHEMA datadog; GRANT USAGE ON SCHEMA datadog TO datadog; GRANT USAGE ON SCHEMA public TO datadog; GRANT pg_monitor TO datadog; CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"); print(f"{GREEN}datadog schema created and permissions granted in {db} database{RESET}"); conn.commit()
             print(f"{GREEN}datadog schema created and permissions granted in {db} database{RESET}")
             conn.commit()
 
 
-def explain_statement(conn, l_query):
-    with conn.cursor() as cur:
+def explain_statement(conn_obj):
+    with conn_obj.cursor() as cur:
         cur.execute("""
         CREATE OR REPLACE FUNCTION datadog.explain_statement(
             l_query TEXT,
@@ -69,16 +65,15 @@ def explain_statement(conn, l_query):
         RETURNS NULL ON NULL INPUT
         SECURITY DEFINER;
         """)
-        conn.commit()
+        conn_obj.commit()
         time.sleep(2)
-
     print(f"{GREEN}Explain plans statement completed{RESET}")
 
 
 def check_postgres_stats(connection_params, db):
     try:
-        conn = psycopg2.connect(**connection_params)
-        with conn.cursor() as cur:
+        conn_obj = psycopg2.connect(**connection_params)
+        with conn_obj.cursor() as cur:
             cur.execute("SELECT 1 FROM pg_stat_database LIMIT 1;")
             print(f"{GREEN}Postgres connection - OK in {db}")
 
@@ -89,15 +84,15 @@ def check_postgres_stats(connection_params, db):
             print(f"{GREEN}Postgres pg_stat_statements read OK {db}")
 
         print(f"{RED}\n############### Moving On... to next database ###############################\n{RESET}")
-        conn.close()
+        conn_obj.close()
     except psycopg2.OperationalError:
         print(f"{RED}Cannot connect to Postgres database to check stats {db}{RESET}")
     except psycopg2.Error:
         print(f"{RED}Error while accessing Postgres statistics in {db}{RESET}")
 
 
-def list_databases(conn):
-    with conn.cursor() as cur:
+def list_databases(conn_obj):
+    with conn_obj.cursor() as cur:
         cur.execute("SELECT datname FROM pg_database WHERE datistemplate = false")
         databases = [row[0] for row in cur.fetchall() if not row[0].startswith('template')]
     return databases

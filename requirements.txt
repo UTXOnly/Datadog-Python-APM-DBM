@@ -1,5 +1,5 @@
 flask
 psycopg2
 ddtrace
-python-env
+python-dotenv
 requests
