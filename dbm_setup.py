@@ -37,7 +37,7 @@ def create_datadog_user_and_schema(conn_obj, db):
     else:
 
         with conn_obj.cursor() as cur:
-            cur.execute("CREATE SCHEMA datadog; GRANT USAGE ON SCHEMA datadog TO datadog; GRANT USAGE ON SCHEMA public TO datadog; GRANT pg_monitor TO datadog; CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"); print(f"{GREEN}datadog schema created and permissions granted in {db} database{RESET}"); conn.commit()
+            cur.execute("CREATE SCHEMA datadog; GRANT USAGE ON SCHEMA datadog TO datadog; GRANT USAGE ON SCHEMA public TO datadog; GRANT pg_monitor TO datadog; CREATE EXTENSION IF NOT EXISTS pg_stat_statements;")
             print(f"{GREEN}datadog schema created and permissions granted in {db} database{RESET}")
             conn.commit()
 
@@ -99,10 +99,10 @@ def list_databases(conn_obj):
 
 
 conn = psycopg2.connect(**connection_params)
-databases = list_databases(conn)
+databases_list = list_databases(conn)
 
 # Iterate through the list of database names, run checks, and create schemas
-for db_name in databases:
+for db_name in databases_list:
     print(f"{GREEN}Discovered database: {RESET}{db_name} \nCreating schema and checking permissions + stats")
     connection_params['dbname'] = db_name
     conn = psycopg2.connect(**connection_params)

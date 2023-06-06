@@ -23,7 +23,6 @@ conn = psycopg2.connect(
     password=os.getenv('DB_PASSWORD')
 )
 
-# Initialize the database and table
 cur = conn.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS hosts (id SERIAL PRIMARY KEY, hostname VARCHAR(255), ip_address VARCHAR(255))")
 conn.commit()
@@ -56,8 +55,6 @@ def index():
     cur = conn.cursor()
     cur.execute("SELECT * FROM hosts")
     rows = cur.fetchall()
-    
-    # Convert the rows to a list of dictionaries
     result = []
     for row in rows:
         result.append({
@@ -65,8 +62,6 @@ def index():
             'ip_address': row[2],
             # Add additional fields as needed
         })
-    
-    # Return the result as JSON
     return jsonify(result)
 
 if __name__ == '__main__':
