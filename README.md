@@ -1,7 +1,8 @@
-# Datadog_APM_DBM
-Simple Python Flask app and Postgres DB for testing [Connecting DBM and APM](https://docs.datadoghq.com/database_monitoring/guide/connect_dbm_and_apm/?tab=python) and [Postgres integration](https://docs.datadoghq.com/integrations/postgres/?tab=docker) with the Datadog agent. This repo includes a `postgresql.conf` file with the necessary modifications to use [Datadog Database Monitoring](https://docs.datadoghq.com/database_monitoring/setup_postgres/selfhosted/?tab=postgres10). Part of that that script prepares discovers databases, iterating through each database to create the necessary schemas and install the `pg_stat_statements` extension if it doesn't already exist. 
 
 ![Pylint](https://github.com/UTXOnly/Datadog-Python-APM-DBM/actions/workflows/pylint.yml/badge.svg)
+
+# Datadog_APM_DBM
+Simple Python Flask app and Postgres DB for testing [Connecting DBM and APM](https://docs.datadoghq.com/database_monitoring/guide/connect_dbm_and_apm/?tab=python) and [Postgres integration](https://docs.datadoghq.com/integrations/postgres/?tab=docker) with the Datadog agent. This repo includes a `postgresql.conf` file with the necessary modifications to use [Datadog Database Monitoring](https://docs.datadoghq.com/database_monitoring/setup_postgres/selfhosted/?tab=postgres10). Part of that that script prepares discovers databases, iterating through each database to create the necessary schemas and install the `pg_stat_statements` extension if it doesn't already exist. 
 
 
 ## Prerequisites
