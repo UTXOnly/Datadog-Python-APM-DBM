@@ -17,7 +17,7 @@ connection_params = {
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD')
 }
-
+#work linux1
 
 def create_datadog_user_and_schema(conn_obj, db):
     with conn_obj.cursor() as cur:
