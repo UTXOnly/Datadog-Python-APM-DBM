@@ -8,6 +8,7 @@ Simple Python Flask app and Postgres DB for testing [Connecting DBM and APM](htt
 ## Prerequisites
 * Docker-compose
 * Datadog API key (If you don't already have an account, [get one here](https://www.datadoghq.com/free-datadog-trial/))
+* Python3.10
 
 
 ## Configuration
