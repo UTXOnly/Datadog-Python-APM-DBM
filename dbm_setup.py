@@ -3,6 +3,10 @@ import os
 import time
 import psycopg2
 
+GREEN = "\033[0;32m"
+RED = "\033[0;31m"
+RESET = "\033[0m"
+
 connection_params = {
     'host': "localhost",
     'port': '5432',
